@@ -1,0 +1,120 @@
+{
+  "categories": {
+    "greetings": {
+      "label": "Greetings & Basics",
+      "words": [
+        {"telugu": "నమస్కారం", "romanized": "Namaskāram", "english": "Hello / Greetings"},
+        {"telugu": "ధన్యవాదాలు", "romanized": "Dhanyavādālu", "english": "Thank you"},
+        {"telugu": "దయచేసి", "romanized": "Dayachēsi", "english": "Please"},
+        {"telugu": "అవును", "romanized": "Avunu", "english": "Yes"},
+        {"telugu": "కాదు", "romanized": "Kādu", "english": "No"},
+        {"telugu": "బాగున్నారా", "romanized": "Bāgunnārā", "english": "How are you?"},
+        {"telugu": "బాగున్నాను", "romanized": "Bāgunnānu", "english": "I am fine"},
+        {"telugu": "శుభోదయం", "romanized": "Śubhōdayam", "english": "Good morning"},
+        {"telugu": "శుభరాత్రి", "romanized": "Śubharātri", "english": "Good night"}
+      ]
+    },
+    "numbers": {
+      "label": "Numbers (1-10)",
+      "words": [
+        {"telugu": "ఒకటి", "romanized": "Okaṭi", "english": "One"},
+        {"telugu": "రెండు", "romanized": "Reṇḍu", "english": "Two"},
+        {"telugu": "మూడు", "romanized": "Mūḍu", "english": "Three"},
+        {"telugu": "నాలుగు", "romanized": "Nālugu", "english": "Four"},
+        {"telugu": "ఐదు", "romanized": "Aidu", "english": "Five"},
+        {"telugu": "ఆరు", "romanized": "Āru", "english": "Six"},
+        {"telugu": "ఏడు", "romanized": "Ēḍu", "english": "Seven"},
+        {"telugu": "ఎనిమిది", "romanized": "Enimidi", "english": "Eight"},
+        {"telugu": "తొమ్మిది", "romanized": "Tommidi", "english": "Nine"},
+        {"telugu": "పది", "romanized": "Padi", "english": "Ten"}
+      ]
+    },
+    "common_nouns": {
+      "label": "Common Nouns",
+      "words": [
+        {"telugu": "నీరు", "romanized": "Nīru", "english": "Water"},
+        {"telugu": "అన్నం", "romanized": "Annam", "english": "Rice / Food"},
+        {"telugu": "ఇల్లు", "romanized": "Illu", "english": "House"},
+        {"telugu": "పుస్తకం", "romanized": "Pustakam", "english": "Book"},
+        {"telugu": "బడి", "romanized": "Baḍi", "english": "School"},
+        {"telugu": "పని", "romanized": "Pani", "english": "Work"},
+        {"telugu": "దారి", "romanized": "Dāri", "english": "Road / Path"},
+        {"telugu": "చెట్టు", "romanized": "Cheṭṭu", "english": "Tree"},
+        {"telugu": "పువ్వు", "romanized": "Puvvu", "english": "Flower"},
+        {"telugu": "సూర్యుడు", "romanized": "Sūryuḍu", "english": "Sun"}
+      ]
+    },
+    "family": {
+      "label": "Family",
+      "words": [
+        {"telugu": "అమ్మ", "romanized": "Amma", "english": "Mother"},
+        {"telugu": "నాన్న", "romanized": "Nānna", "english": "Father"},
+        {"telugu": "అక్క", "romanized": "Akka", "english": "Elder sister"},
+        {"telugu": "అన్న", "romanized": "Anna", "english": "Elder brother"},
+        {"telugu": "తమ్ముడు", "romanized": "Tammuḍu", "english": "Younger brother"},
+        {"telugu": "చెల్లి", "romanized": "Chelli", "english": "Younger sister"},
+        {"telugu": "తాత", "romanized": "Tāta", "english": "Grandfather"},
+        {"telugu": "నానమ్మ", "romanized": "Nānamma", "english": "Grandmother"}
+      ]
+    },
+    "common_verbs": {
+      "label": "Common Verbs",
+      "words": [
+        {"telugu": "రా", "romanized": "Rā", "english": "Come"},
+        {"telugu": "పో", "romanized": "Pō", "english": "Go"},
+        {"telugu": "తిను", "romanized": "Tinu", "english": "Eat"},
+        {"telugu": "త్రాగు", "romanized": "Trāgu", "english": "Drink"},
+        {"telugu": "చదువు", "romanized": "Chaduvu", "english": "Read / Study"},
+        {"telugu": "రాయి", "romanized": "Rāyi", "english": "Write"},
+        {"telugu": "చూడు", "romanized": "Chūḍu", "english": "See / Look"},
+        {"telugu": "విను", "romanized": "Vinu", "english": "Listen"},
+        {"telugu": "మాట్లాడు", "romanized": "Māṭlāḍu", "english": "Speak"},
+        {"telugu": "నేర్చుకో", "romanized": "Nērchukō", "english": "Learn"}
+      ]
+    },
+    "nursery_rhymes": {
+      "label": "Nursery Rhymes",
+      "rhymes": [
+        {
+          "title": "Veeri Veeri Gummadi Pandu",
+          "title_telugu": "వీరి వీరి గుమ్మడి పండు",
+          "english_meaning": "A playful children's rhyme about a pumpkin and running away",
+          "verses": [
+            {
+              "verse_number": 1,
+              "telugu": "వీరి వీరి గుమ్మడి పండు, వీరి పేరేమి,\nదాగుడు మూతల దండకోరు వీరి పేరేమి\nపింకీ… పారిపో.\n\nతార్ మార్ తత్తర్మర్, తార్ మార్ తత్తర్మర్!!",
+              "romanized": "Veeri veeri gummadi pandu, veeri peremi,\nDaagudu muthala dhandakoru veeri peremi\nPinky… paaripo.\n\nTaar maar tattharmar, taar maar tattharmar!!"
+            },
+            {
+              "verse_number": 2,
+              "telugu": "వీరి వీరి గుమ్మడి పండు, వీరి పేరేమి,\nదాగుడు మూతల దండకోరు వీరి పేరేమి\nగుడ్డు… పారిపో.\n\nతార్ మార్ తిత్తర్మర్, తార్ మార్ తత్తర్మర్!!",
+              "romanized": "Veeri veeri gummadi pandu, veeri peremi,\nDaagudu muthala dhandakoru veeri peremi\nGuddu… paaripo.\n\nTaar maar tittharmar, taar maar tattharmar!!"
+            },
+            {
+              "verse_number": 3,
+              "telugu": "వీరి వీరి గుమ్మడి పండు, వీరి పేరేమి,\nదాగుడు మూతల దండకోరు వీరి పేరేమి\nషోనా… పారిపో.\n\nతార్ మార్ తిత్తర్మర్, తార్ మార్ తత్తర్మర్!!",
+              "romanized": "Veeri veeri gummadi pandu, veeri peremi,\nDaagudu muthala dhandakoru veeri peremi\nShona… paaripo.\n\nTaar maar tittharmar, taar maar tattharmar!!"
+            },
+            {
+              "verse_number": 4,
+              "telugu": "వీరి వీరి గుమ్మడి పండు, వీరి పేరేమి,\nదాగుడు మూతల దండకోరు వీరి పేరేమి\nచింటు… పారిపో.\n\nతార్ మార్ తిత్తర్మర్, తార్ మార్ తత్తర్మర్!!\nఎక్కడి దొంగలు అక్కడే, సాంబార్ బుద్ధి!",
+              "romanized": "Veeri veeri gummadi pandu, veeri peremi,\nDaagudu muthala dhandakoru veeri peremi\nChintu… paaripo.\n\nTaar maar tittharmar, taar maar tattharmar!!\nEkkadi dongalu akkade, sambar buddi!"
+            }
+          ]
+        },
+        {
+          "title": "Jo Achyutananda",
+          "title_telugu": "జో అచ్యుతానంద",
+          "english_meaning": "A traditional Telugu lullaby invoking Lord Vishnu's names to soothe a child to sleep",
+          "verses": [
+            {
+              "verse_number": 1,
+              "telugu": "జో అచ్యుతానంద జోజో ముకుందా\nరావే పరమానంద రామ గోవిందా\nజో జో",
+              "romanized": "Jō achyutānanda jōjō mukundā\nRāve paramānanda rāma gōvindā\nJō jō"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

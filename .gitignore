@@ -1,0 +1,7 @@
+generated_audio/
+__pycache__/
+.streamlit/secrets.toml
+*.pyc
+*.wav
+*.mp3
+.DS_Store

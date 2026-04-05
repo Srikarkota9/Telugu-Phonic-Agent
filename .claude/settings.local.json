@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Users/srikarthegoat/micromamba/bin/python -c \"from elevenlabs.client import ElevenLabs; c = ElevenLabs\\(api_key=''test''\\); print\\([m for m in dir\\(c.voices\\) if not m.startswith\\(''_''\\)]\\)\")",
+      "Bash(/Users/srikarthegoat/micromamba/bin/python -c \"from elevenlabs.client import ElevenLabs; help\\(ElevenLabs\\(api_key=''test''\\).voices.ivc.create_voice_from_preview\\)\")",
+      "Bash(/Users/srikarthegoat/micromamba/bin/python -c \"from elevenlabs.client import ElevenLabs; c = ElevenLabs\\(api_key=''test''\\); print\\([m for m in dir\\(c.voices.ivc\\) if not m.startswith\\(''_''\\)]\\)\")",
+      "Bash(/Users/srikarthegoat/micromamba/bin/python -c \":*)"
+    ]
+  }
+}

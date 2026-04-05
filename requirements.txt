@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+openai-whisper
+pronouncing
+python-multipart
+elevenlabs
+sounddevice
+scipy
+streamlit
