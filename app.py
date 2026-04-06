@@ -74,11 +74,19 @@ def clone_voice(client, audio_bytes):
 
 def generate_single_audio(client, voice_id, text):
     """Generate audio for a single text and return bytes."""
+    from elevenlabs import VoiceSettings
+
     audio_iter = client.text_to_speech.convert(
         voice_id=voice_id,
         text=text,
         model_id=MODEL_ID,
         output_format="mp3_44100_128",
+        voice_settings=VoiceSettings(
+            stability=0.65,           # Slightly lower = more expressive/natural
+            similarity_boost=0.85,    # High = stays close to cloned voice
+            style=0.15,               # Low = cleaner pronunciation
+            use_speaker_boost=True,   # Enhances voice clarity
+        ),
     )
     audio_bytes = b"".join(audio_iter)
     return audio_bytes
@@ -531,17 +539,24 @@ with st.sidebar:
     st.markdown('<hr class="divider-accent">', unsafe_allow_html=True)
 
     st.markdown(
-        "Record or upload a **~30 second** voice sample. "
-        "Speak clearly in your natural voice."
+        "Record or upload a **~60 second** voice sample. "
+        "Speak clearly and slowly in your natural voice. "
+        "**Include some Telugu words** for better results."
     )
 
     with st.expander("📝 Sample script to read", expanded=False):
         st.markdown(
+            "Read this script **slowly and clearly:**\n\n"
             '*"Hello, my name is ___. I am recording my voice so that '
             "it can be used to help people learn Telugu pronunciation. "
-            "Telugu is a beautiful language spoken by millions of people. "
-            "I will now count from one to ten slowly and clearly. "
-            'One, two, three, four, five, six, seven, eight, nine, ten."*'
+            "Telugu is a beautiful language spoken by millions of people.\n\n"
+            "Now I will say some Telugu words:\n\n"
+            "Namaskāram. Dhanyavādālu. Bāgunnārā. Bāgunnānu. "
+            "Śubhōdayam. Śubharātri.\n\n"
+            "Okaṭi, Reṇḍu, Mūḍu, Nālugu, Aidu, Āru, Ēḍu, Enimidi, Tommidi, Padi.\n\n"
+            "Amma, Nānna, Akka, Anna, Tammuḍu, Chelli.\n\n"
+            "Nīru, Annam, Illu, Pustakam, Cheṭṭu, Puvvu, Sūryuḍu.\n\n"
+            'Rā, Pō, Tinu, Chaduvu, Chūḍu, Vinu, Māṭlāḍu."*'
         )
 
     audio_input = st.audio_input("🎤 Record your voice")
