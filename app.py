@@ -540,23 +540,27 @@ with st.sidebar:
 
     st.markdown(
         "Record or upload a **~60 second** voice sample. "
-        "Speak clearly and slowly in your natural voice. "
-        "**Include some Telugu words** for better results."
+        "Speak **clearly and slowly** in your natural voice."
     )
 
     with st.expander("📝 Sample script to read", expanded=False):
         st.markdown(
             "Read this script **slowly and clearly:**\n\n"
             '*"Hello, my name is ___. I am recording my voice so that '
-            "it can be used to help people learn Telugu pronunciation. "
-            "Telugu is a beautiful language spoken by millions of people.\n\n"
-            "Now I will say some Telugu words:\n\n"
-            "Namaskāram. Dhanyavādālu. Bāgunnārā. Bāgunnānu. "
-            "Śubhōdayam. Śubharātri.\n\n"
-            "Okaṭi, Reṇḍu, Mūḍu, Nālugu, Aidu, Āru, Ēḍu, Enimidi, Tommidi, Padi.\n\n"
-            "Amma, Nānna, Akka, Anna, Tammuḍu, Chelli.\n\n"
-            "Nīru, Annam, Illu, Pustakam, Cheṭṭu, Puvvu, Sūryuḍu.\n\n"
-            'Rā, Pō, Tinu, Chaduvu, Chūḍu, Vinu, Māṭlāḍu."*'
+            "it can be used to help me learn Telugu pronunciation. "
+            "Telugu is a beautiful language spoken by millions of people. "
+            "I am excited to learn how to speak it.\n\n"
+            "The sun is shining brightly today. "
+            "My mother and father are at home. "
+            "I like to drink water and eat good food. "
+            "The tall tree has a beautiful flower. "
+            "I go to school to read my book every day.\n\n"
+            "I will now count slowly. "
+            "One, two, three, four, five, six, seven, eight, nine, ten.\n\n"
+            "Now I will say some sounds. "
+            "Baa, daa, taa, kaa, maa, naa, paa, raa, saa, vaa. "
+            "Cha, tha, sha, gaa, jaa, haa, laa, yaa. "
+            'Oo, aa, ee, ai, au, uu."*'
         )
 
     audio_input = st.audio_input("🎤 Record your voice")
