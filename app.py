@@ -556,11 +556,7 @@ with st.sidebar:
             "The tall tree has a beautiful flower. "
             "I go to school to read my book every day.\n\n"
             "I will now count slowly. "
-            "One, two, three, four, five, six, seven, eight, nine, ten.\n\n"
-            "Now I will say some sounds. "
-            "Baa, daa, taa, kaa, maa, naa, paa, raa, saa, vaa. "
-            "Cha, tha, sha, gaa, jaa, haa, laa, yaa. "
-            'Oo, aa, ee, ai, au, uu."*'
+            'One, two, three, four, five, six, seven, eight, nine, ten."*'
         )
 
     audio_input = st.audio_input("🎤 Record your voice")
