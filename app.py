@@ -18,8 +18,8 @@ OUTPUT_DIR = "generated_audio"
 MODEL_ID = "eleven_multilingual_v2"
 
 # Default ElevenLabs voice for users who haven't cloned yet
-DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"  # Sarah — clear, professional
-DEFAULT_VOICE_LABEL = "Default Voice (Sarah)"
+DEFAULT_VOICE_ID = "PSGmTr1P7xsA5H9W7obv"  # Balachander — South Indian accent
+DEFAULT_VOICE_LABEL = "Default Voice (Balachander)"
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
