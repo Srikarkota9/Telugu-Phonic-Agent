@@ -320,102 +320,177 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* ─── Global ─── */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
     }
 
+    /* ─── Animations ─── */
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.4); }
+        50% { box-shadow: 0 0 12px 4px rgba(255,107,53,0.15); }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+    }
+    @keyframes shimmer {
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
+
     /* ─── Header Banner ─── */
     .hero-banner {
-        background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFB347 100%);
-        border-radius: 16px;
-        padding: 40px 35px;
-        margin-bottom: 30px;
+        background: linear-gradient(135deg, #FF6B35, #F7931E, #E8530E, #FFB347, #FF6B35);
+        background-size: 300% 300%;
+        animation: gradientShift 8s ease infinite;
+        border-radius: 20px;
+        padding: 48px 40px;
+        margin-bottom: 32px;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 8px 32px rgba(255,107,53,0.25), 0 0 60px rgba(255,107,53,0.08);
     }
     .hero-banner::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 400px;
-        height: 400px;
-        background: rgba(255,255,255,0.08);
+        top: -60%;
+        right: -15%;
+        width: 450px;
+        height: 450px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 50%;
+    }
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.05);
         border-radius: 50%;
     }
     .hero-banner h1 {
-        font-size: 2.5em;
-        font-weight: 700;
+        font-size: 2.8em;
+        font-weight: 800;
         color: white;
-        margin: 0 0 8px 0;
+        margin: 0 0 10px 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        letter-spacing: -0.5px;
+        position: relative;
+        z-index: 1;
     }
     .hero-banner p {
-        font-size: 1.15em;
-        color: rgba(255,255,255,0.9);
+        font-size: 1.2em;
+        color: rgba(255,255,255,0.92);
         margin: 0;
-        font-weight: 300;
+        font-weight: 400;
+        position: relative;
+        z-index: 1;
     }
     .hero-telugu {
         font-family: 'Noto Sans Telugu', sans-serif;
-        font-size: 1.1em;
-        color: rgba(255,255,255,0.7);
-        margin-top: 4px;
+        font-size: 1.2em;
+        color: rgba(255,255,255,0.6);
+        margin-top: 6px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ─── Glassmorphism Base ─── */
+    .glass {
+        background: rgba(30, 32, 40, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.06);
     }
 
     /* ─── Word Cards ─── */
     .word-card {
-        background: linear-gradient(145deg, #1E2028, #252830);
-        border: 1px solid rgba(255, 107, 53, 0.15);
-        border-radius: 14px;
-        padding: 20px;
-        margin-bottom: 12px;
-        transition: all 0.3s ease;
+        background: rgba(30, 32, 40, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 107, 53, 0.1);
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 14px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .word-card:hover {
-        border-color: rgba(255, 107, 53, 0.4);
-        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.1);
-        transform: translateY(-1px);
+        border-color: rgba(255, 107, 53, 0.45);
+        box-shadow: 0 4px 24px rgba(255, 107, 53, 0.12), 0 0 40px rgba(255,107,53,0.06);
+        transform: translateY(-2px);
+        background: rgba(35, 37, 48, 0.75);
     }
     .word-telugu {
         font-family: 'Noto Sans Telugu', sans-serif;
-        font-size: 1.8em;
+        font-size: 2em;
         font-weight: 700;
         color: #FF6B35;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
+        text-shadow: 0 0 20px rgba(255,107,53,0.2);
     }
     .word-roman {
-        font-size: 1.05em;
-        color: #B0B8C8;
+        font-size: 1.08em;
+        color: #B8C0D0;
         font-style: italic;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
     }
     .word-english {
         font-size: 0.95em;
-        color: #6B7280;
+        color: #6B7585;
+    }
+
+    /* ─── Audio Player Wrapper ─── */
+    .audio-wrapper {
+        background: rgba(25, 27, 35, 0.5);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,107,53,0.1);
+        border-radius: 12px;
+        padding: 12px;
+        margin-top: 8px;
+        transition: all 0.3s ease;
+    }
+    .audio-wrapper:hover {
+        border-color: rgba(255,107,53,0.25);
+        box-shadow: 0 0 16px rgba(255,107,53,0.08);
     }
 
     /* ─── Rhyme Card ─── */
     .rhyme-card {
-        background: linear-gradient(145deg, #1A1D24, #22252D);
-        border: 1px solid rgba(255, 179, 71, 0.15);
-        border-radius: 14px;
-        padding: 24px;
-        margin: 12px 0;
+        background: rgba(26, 29, 36, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 179, 71, 0.12);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 14px 0;
+        transition: all 0.3s ease;
+    }
+    .rhyme-card:hover {
+        border-color: rgba(255, 179, 71, 0.3);
+        box-shadow: 0 4px 24px rgba(255,179,71,0.08);
     }
     .rhyme-title {
         font-family: 'Noto Sans Telugu', sans-serif;
-        font-size: 1.5em;
+        font-size: 1.6em;
         font-weight: 700;
         color: #FFB347;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+        text-shadow: 0 0 20px rgba(255,179,71,0.15);
     }
     .rhyme-verse {
         font-family: 'Noto Sans Telugu', sans-serif;
-        font-size: 1.1em;
-        color: #D1D5DB;
-        line-height: 1.8;
+        font-size: 1.12em;
+        color: #D4D8E0;
+        line-height: 1.9;
         white-space: pre-wrap;
     }
     .rhyme-romanized {
@@ -424,106 +499,158 @@ st.markdown("""
         font-style: italic;
         line-height: 1.7;
         white-space: pre-wrap;
-        margin-top: 8px;
+        margin-top: 10px;
     }
 
     /* ─── Practice Section ─── */
     .practice-word {
         font-family: 'Noto Sans Telugu', sans-serif;
-        font-size: 3em;
+        font-size: 3.5em;
         font-weight: 700;
         color: #FF6B35;
         text-align: center;
-        padding: 20px;
+        padding: 24px;
+        text-shadow: 0 0 30px rgba(255,107,53,0.25);
     }
     .practice-info {
         text-align: center;
         color: #9CA3AF;
-        font-size: 1.1em;
+        font-size: 1.15em;
     }
 
     /* ─── Score Badge ─── */
     .score-badge {
         display: inline-block;
-        font-size: 2em;
+        font-size: 2.2em;
         font-weight: 700;
-        padding: 10px 24px;
-        border-radius: 12px;
+        padding: 12px 28px;
+        border-radius: 14px;
         margin: 10px 0;
     }
-    .score-great { background: rgba(0,204,102,0.15); color: #00cc66; border: 1px solid rgba(0,204,102,0.3); }
-    .score-good { background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.3); }
-    .score-poor { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
+    .score-great {
+        background: rgba(0,204,102,0.12);
+        color: #00cc66;
+        border: 1px solid rgba(0,204,102,0.3);
+        box-shadow: 0 0 20px rgba(0,204,102,0.1);
+    }
+    .score-good {
+        background: rgba(255,170,0,0.12);
+        color: #ffaa00;
+        border: 1px solid rgba(255,170,0,0.3);
+        box-shadow: 0 0 20px rgba(255,170,0,0.1);
+    }
+    .score-poor {
+        background: rgba(255,68,68,0.12);
+        color: #ff4444;
+        border: 1px solid rgba(255,68,68,0.3);
+        box-shadow: 0 0 20px rgba(255,68,68,0.1);
+    }
 
     /* ─── Sidebar Styling ─── */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #13151A, #1A1D24);
-        border-right: 1px solid rgba(255,107,53,0.1);
+        background: linear-gradient(180deg, #0F1117, #151820, #1A1D24);
+        border-right: 1px solid rgba(255,107,53,0.08);
     }
     .sidebar-status {
-        background: linear-gradient(135deg, #1E3A2F, #1A2E25);
-        border: 1px solid rgba(0,204,102,0.3);
-        border-radius: 10px;
-        padding: 14px;
-        margin-bottom: 16px;
+        background: rgba(30, 58, 47, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0,204,102,0.25);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 18px;
         text-align: center;
+        box-shadow: 0 0 20px rgba(0,204,102,0.06);
     }
     .sidebar-status-default {
-        background: linear-gradient(135deg, #2A2235, #1F1A2E);
-        border: 1px solid rgba(170,136,255,0.3);
-        border-radius: 10px;
-        padding: 14px;
-        margin-bottom: 16px;
+        background: rgba(42, 34, 53, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(170,136,255,0.25);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 18px;
         text-align: center;
+        box-shadow: 0 0 20px rgba(170,136,255,0.06);
     }
 
     /* ─── Tab Styling ─── */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 6px;
+        background: rgba(20, 22, 28, 0.5);
+        border-radius: 14px 14px 0 0;
+        padding: 6px 6px 0 6px;
     }
     .stTabs [data-baseweb="tab"] {
-        border-radius: 10px 10px 0 0;
-        padding: 10px 20px;
-        font-weight: 500;
+        border-radius: 12px 12px 0 0;
+        padding: 12px 22px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        background: rgba(255,107,53,0.08);
+    }
+    .stTabs [aria-selected="true"] {
+        box-shadow: 0 -2px 8px rgba(255,107,53,0.15);
     }
 
     /* ─── Category Pill ─── */
     .category-label {
         display: inline-block;
-        background: rgba(255,107,53,0.12);
+        background: rgba(255,107,53,0.1);
         color: #FF6B35;
-        padding: 6px 16px;
-        border-radius: 20px;
+        padding: 8px 20px;
+        border-radius: 24px;
         font-weight: 600;
         font-size: 0.95em;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
+        border: 1px solid rgba(255,107,53,0.15);
+        box-shadow: 0 0 12px rgba(255,107,53,0.06);
+    }
+
+    /* ─── Buttons ─── */
+    .stButton > button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stButton > button:hover {
+        box-shadow: 0 4px 16px rgba(255,107,53,0.2);
+        transform: translateY(-1px);
+    }
+    .stButton > button[kind="primary"] {
+        box-shadow: 0 2px 8px rgba(255,107,53,0.15);
+    }
+    .stButton > button[kind="primary"]:hover {
+        box-shadow: 0 6px 24px rgba(255,107,53,0.3);
     }
 
     /* ─── Misc ─── */
     .divider-accent {
         border: none;
         height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(255,107,53,0.3), transparent);
-        margin: 24px 0;
+        background: linear-gradient(90deg, transparent, rgba(255,107,53,0.35), transparent);
+        margin: 28px 0;
     }
 
     /* ─── How It Works Steps ─── */
     .how-it-works {
-        background: linear-gradient(145deg, #1A1D24, #1E2028);
-        border: 1px solid rgba(255,107,53,0.15);
-        border-radius: 14px;
-        padding: 24px 28px;
-        margin-bottom: 28px;
+        background: rgba(26, 29, 36, 0.5);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,107,53,0.12);
+        border-radius: 18px;
+        padding: 28px 32px;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
     .how-it-works h3 {
         color: #FF6B35;
-        margin: 0 0 16px 0;
-        font-size: 1.15em;
+        margin: 0 0 20px 0;
+        font-size: 1.2em;
+        font-weight: 700;
+        letter-spacing: 0.3px;
     }
     .step-row {
         display: flex;
         align-items: flex-start;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
     }
     .step-row:last-child {
         margin-bottom: 0;
@@ -533,23 +660,40 @@ st.markdown("""
         color: white;
         font-weight: 700;
         font-size: 0.85em;
-        width: 28px;
-        height: 28px;
-        min-width: 28px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 14px;
+        margin-right: 16px;
         margin-top: 2px;
+        animation: pulse 3s ease-in-out infinite;
+        box-shadow: 0 2px 8px rgba(255,107,53,0.25);
     }
     .step-text {
         color: #C8CDD5;
-        font-size: 0.95em;
-        line-height: 1.5;
+        font-size: 0.97em;
+        line-height: 1.55;
     }
     .step-text b {
         color: #FFFFFF;
+    }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255,107,53,0.2);
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255,107,53,0.4);
     }
 </style>
 """, unsafe_allow_html=True)
