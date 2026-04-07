@@ -506,6 +506,51 @@ st.markdown("""
         background: linear-gradient(90deg, transparent, rgba(255,107,53,0.3), transparent);
         margin: 24px 0;
     }
+
+    /* ─── How It Works Steps ─── */
+    .how-it-works {
+        background: linear-gradient(145deg, #1A1D24, #1E2028);
+        border: 1px solid rgba(255,107,53,0.15);
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 28px;
+    }
+    .how-it-works h3 {
+        color: #FF6B35;
+        margin: 0 0 16px 0;
+        font-size: 1.15em;
+    }
+    .step-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 14px;
+    }
+    .step-row:last-child {
+        margin-bottom: 0;
+    }
+    .step-number {
+        background: linear-gradient(135deg, #FF6B35, #F7931E);
+        color: white;
+        font-weight: 700;
+        font-size: 0.85em;
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 14px;
+        margin-top: 2px;
+    }
+    .step-text {
+        color: #C8CDD5;
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
+    .step-text b {
+        color: #FFFFFF;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -516,6 +561,30 @@ st.markdown("""
     <h1>Telugu Phonic Agent</h1>
     <p>Learn Telugu pronunciation in your own voice</p>
     <div class="hero-telugu">తెలుగు ఫోనిక్ ఏజెంట్</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ── How It Works ────────────────────────────────────────────────────────────
+
+st.markdown("""
+<div class="how-it-works">
+    <h3>How It Works</h3>
+    <div class="step-row">
+        <div class="step-number">1</div>
+        <div class="step-text"><b>Clone your voice</b> — Record a 60-second voice sample in the sidebar on the left. Read the sample script clearly, then click "Clone My Voice".</div>
+    </div>
+    <div class="step-row">
+        <div class="step-number">2</div>
+        <div class="step-text"><b>Generate audio</b> — Go to the <b>Generate All</b> tab and click "Generate Everything". This creates all Telugu word and rhyme audio in your own voice.</div>
+    </div>
+    <div class="step-row">
+        <div class="step-number">3</div>
+        <div class="step-text"><b>Listen & learn</b> — Go to the <b>Words</b> tab to browse categories and hear each Telugu word pronounced in your voice. Check the <b>Nursery Rhymes</b> tab for fun rhymes.</div>
+    </div>
+    <div class="step-row">
+        <div class="step-number">4</div>
+        <div class="step-text"><b>Practice pronunciation</b> — Go to the <b>Pronunciation Practice</b> tab, pick a word, listen to it, then record yourself saying it. The app tells you exactly which sounds you got right or wrong.</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
