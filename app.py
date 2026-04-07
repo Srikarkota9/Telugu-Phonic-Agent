@@ -74,15 +74,13 @@ def clone_voice(client, audio_bytes):
 
 def generate_single_audio(client, voice_id, text, pronunciation_hint=""):
     """Generate audio for a single text and return bytes.
-    If pronunciation_hint is provided, it's appended to help the model pronounce correctly.
+    If pronunciation_hint is provided, use it instead of Telugu script
+    since romanized text produces better pronunciation.
     """
     from elevenlabs import VoiceSettings
 
-    # If a romanized hint is given, add it as a guide for the TTS
-    if pronunciation_hint:
-        tts_text = f"{text}... {pronunciation_hint}"
-    else:
-        tts_text = text
+    # Use romanized text if available — it pronounces better
+    tts_text = pronunciation_hint if pronunciation_hint else text
 
     audio_iter = client.text_to_speech.convert(
         voice_id=voice_id,
