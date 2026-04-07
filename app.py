@@ -72,19 +72,27 @@ def clone_voice(client, audio_bytes):
         os.remove(tmp.name)
 
 
-def generate_single_audio(client, voice_id, text):
-    """Generate audio for a single text and return bytes."""
+def generate_single_audio(client, voice_id, text, pronunciation_hint=""):
+    """Generate audio for a single text and return bytes.
+    If pronunciation_hint is provided, it's appended to help the model pronounce correctly.
+    """
     from elevenlabs import VoiceSettings
+
+    # If a romanized hint is given, add it as a guide for the TTS
+    if pronunciation_hint:
+        tts_text = f"{text}... {pronunciation_hint}"
+    else:
+        tts_text = text
 
     audio_iter = client.text_to_speech.convert(
         voice_id=voice_id,
-        text=text,
+        text=tts_text,
         model_id=MODEL_ID,
         output_format="mp3_44100_128",
         voice_settings=VoiceSettings(
-            stability=0.65,           # Slightly lower = more expressive/natural
-            similarity_boost=0.85,    # High = stays close to cloned voice
-            style=0.15,               # Low = cleaner pronunciation
+            stability=0.85,           # High = consistent, clear pronunciation
+            similarity_boost=0.90,    # High = stays close to voice
+            style=0.0,                # Zero = cleanest, most neutral delivery
             use_speaker_boost=True,   # Enhances voice clarity
         ),
     )
@@ -296,7 +304,7 @@ def play_or_generate_word(client, voice_id, user_dir, cat_key, word):
     """Play existing audio or generate on demand. Returns filepath."""
     filepath = get_word_filepath(user_dir, cat_key, word["romanized"])
     if not os.path.exists(filepath):
-        audio = generate_single_audio(client, voice_id, word["telugu"])
+        audio = generate_single_audio(client, voice_id, word["telugu"], pronunciation_hint=word["romanized"])
         save_audio(audio, filepath)
     return filepath
 
@@ -643,7 +651,7 @@ with tab_words:
                             st.error("API key not configured.")
                         else:
                             with st.spinner("Generating..."):
-                                audio = generate_single_audio(client, active_voice, word["telugu"])
+                                audio = generate_single_audio(client, active_voice, word["telugu"], pronunciation_hint=word["romanized"])
                                 save_audio(audio, filepath)
                                 st.rerun()
 
@@ -781,7 +789,7 @@ with tab_practice:
                 client = get_client()
                 if client:
                     with st.spinner("Generating..."):
-                        audio = generate_single_audio(client, active_voice, word["telugu"])
+                        audio = generate_single_audio(client, active_voice, word["telugu"], pronunciation_hint=word["romanized"])
                         save_audio(audio, filepath)
                     with open(filepath, "rb") as f:
                         st.audio(f.read(), format="audio/mp3")
@@ -925,7 +933,7 @@ with tab_generate_all:
                 for word in category["words"]:
                     filepath = get_word_filepath(user_dir, cat_key, word["romanized"])
                     if regenerate or not os.path.exists(filepath):
-                        audio = generate_single_audio(client, voice_id, word["telugu"])
+                        audio = generate_single_audio(client, voice_id, word["telugu"], pronunciation_hint=word["romanized"])
                         save_audio(audio, filepath)
                     done += 1
                     progress.progress(
