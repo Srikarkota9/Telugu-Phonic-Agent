@@ -9,6 +9,7 @@ import json
 import tempfile
 import difflib
 import re
+import random
 import streamlit as st
 from elevenlabs.client import ElevenLabs
 import whisper
@@ -305,6 +306,50 @@ def play_or_generate_word(client, voice_id, user_dir, cat_key, word):
         audio = generate_single_audio(client, voice_id, word["telugu"], pronunciation_hint=word["romanized"])
         save_audio(audio, filepath)
     return filepath
+
+
+# ── Progress Tracking ──────────────────────────────────────────────────────
+
+def init_progress():
+    """Initialize progress tracking in session state."""
+    if "progress" not in st.session_state:
+        st.session_state["progress"] = {}
+    if "quiz_stats" not in st.session_state:
+        st.session_state["quiz_stats"] = {"correct": 0, "total": 0, "streak": 0, "best_streak": 0}
+
+
+def record_practice_score(cat_key, romanized, score):
+    """Record a pronunciation practice score for a word."""
+    init_progress()
+    key = f"{cat_key}::{romanized}"
+    if key not in st.session_state["progress"]:
+        st.session_state["progress"][key] = {"attempts": 0, "best_score": 0, "mastered": False}
+    entry = st.session_state["progress"][key]
+    entry["attempts"] += 1
+    entry["best_score"] = max(entry["best_score"], score)
+    entry["mastered"] = entry["best_score"] >= 90
+
+
+def record_quiz_result(correct):
+    """Record a quiz answer result."""
+    init_progress()
+    stats = st.session_state["quiz_stats"]
+    stats["total"] += 1
+    if correct:
+        stats["correct"] += 1
+        stats["streak"] += 1
+        stats["best_streak"] = max(stats["best_streak"], stats["streak"])
+    else:
+        stats["streak"] = 0
+
+
+def get_all_words(word_categories):
+    """Get a flat list of all words across categories."""
+    all_words = []
+    for cat_key, cat in word_categories.items():
+        for word in cat["words"]:
+            all_words.append({"cat_key": cat_key, **word})
+    return all_words
 
 
 # ── Page Config ──────────────────────────────────────────────────────────────
@@ -695,6 +740,96 @@ st.markdown("""
     ::-webkit-scrollbar-thumb:hover {
         background: rgba(255,107,53,0.4);
     }
+
+    /* ─── Progress Dashboard ─── */
+    .progress-card {
+        background: rgba(30, 32, 40, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,107,53,0.12);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    .progress-card:hover {
+        border-color: rgba(255,107,53,0.3);
+        box-shadow: 0 4px 20px rgba(255,107,53,0.1);
+    }
+    .progress-number {
+        font-size: 2.5em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #FF6B35, #FFB347);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .progress-label {
+        font-size: 0.9em;
+        color: #8B95A5;
+        margin-top: 4px;
+    }
+    .progress-bar-bg {
+        background: rgba(255,255,255,0.06);
+        border-radius: 8px;
+        height: 10px;
+        overflow: hidden;
+        margin: 8px 0;
+    }
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #FF6B35, #FFB347);
+        transition: width 0.5s ease;
+    }
+    .progress-bar-fill-green {
+        height: 100%;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #00cc66, #00ff88);
+        transition: width 0.5s ease;
+    }
+
+    /* ─── Quiz Cards ─── */
+    .quiz-option {
+        background: rgba(30, 32, 40, 0.6);
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 18px 24px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-size: 1.1em;
+        font-weight: 500;
+        color: #C8CDD5;
+    }
+    .quiz-option:hover {
+        border-color: rgba(255,107,53,0.5);
+        box-shadow: 0 0 20px rgba(255,107,53,0.1);
+        transform: translateY(-2px);
+        color: white;
+    }
+    .quiz-correct {
+        background: rgba(0,204,102,0.15) !important;
+        border-color: rgba(0,204,102,0.5) !important;
+        color: #00cc66 !important;
+        box-shadow: 0 0 20px rgba(0,204,102,0.15);
+    }
+    .quiz-wrong {
+        background: rgba(255,68,68,0.15) !important;
+        border-color: rgba(255,68,68,0.5) !important;
+        color: #ff4444 !important;
+        box-shadow: 0 0 20px rgba(255,68,68,0.15);
+    }
+    .quiz-streak {
+        background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,179,71,0.1));
+        border: 1px solid rgba(255,107,53,0.25);
+        border-radius: 12px;
+        padding: 12px 20px;
+        display: inline-block;
+        font-weight: 600;
+        color: #FFB347;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -816,8 +951,10 @@ has_rhymes = "nursery_rhymes" in word_bank["categories"]
 user_dir = get_user_audio_dir()
 active_voice = get_active_voice_id()
 
-tab_words, tab_rhymes, tab_practice, tab_generate_all = st.tabs(
-    ["📚 Words", "🎶 Nursery Rhymes", "🎯 Pronunciation Practice", "⚡ Generate All"]
+init_progress()
+
+tab_words, tab_rhymes, tab_practice, tab_quiz, tab_progress, tab_generate_all = st.tabs(
+    ["📚 Words", "🎶 Nursery Rhymes", "🎯 Practice", "🧠 Quiz", "📊 Progress", "⚡ Generate All"]
 )
 
 # ── Tab 1: Words ─────────────────────────────────────────────────────────────
@@ -1052,6 +1189,9 @@ with tab_practice:
 
                 comparison, score = compare_pronunciation(expected_roman, actual_roman)
 
+                # Record progress
+                record_practice_score(prac_cat, word["romanized"], score)
+
                 if score >= 90:
                     badge_class = "score-great"
                     badge_msg = "Excellent! 🎉"
@@ -1096,7 +1236,299 @@ with tab_practice:
                     with open(filepath, "rb") as f:
                         st.audio(f.read(), format="audio/mp3")
 
-# ── Tab 4: Generate All ─────────────────────────────────────────────────────
+# ── Tab 4: Quiz Mode ───────────────────────────────────────────────────────
+
+with tab_quiz:
+    st.markdown(
+        '<p style="color: #9CA3AF; font-size: 1.05em;">'
+        'Listen to a Telugu word and pick the correct English meaning. '
+        'Build your streak and test your knowledge!'
+        '</p>',
+        unsafe_allow_html=True,
+    )
+
+    all_words = get_all_words(word_categories)
+    quiz_stats = st.session_state["quiz_stats"]
+
+    # Show current streak and stats
+    col_streak, col_score, col_best = st.columns(3)
+    with col_streak:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_stats["streak"]}</div>'
+            f'<div class="progress-label">Current Streak</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_score:
+        pct = int((quiz_stats["correct"] / max(quiz_stats["total"], 1)) * 100)
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_stats["correct"]}/{quiz_stats["total"]}</div>'
+            f'<div class="progress-label">Correct ({pct}%)</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_best:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_stats["best_streak"]}</div>'
+            f'<div class="progress-label">Best Streak</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown('<hr class="divider-accent">', unsafe_allow_html=True)
+
+    # Generate a new question
+    if "quiz_word" not in st.session_state or st.button("Next Question", type="primary"):
+        if len(all_words) < 4:
+            st.warning("Need at least 4 words in the word bank for quiz mode.")
+        else:
+            correct_word = random.choice(all_words)
+            wrong_words = [w for w in all_words if w["english"] != correct_word["english"]]
+            wrong_options = random.sample(wrong_words, min(3, len(wrong_words)))
+            options = [correct_word] + wrong_options
+            random.shuffle(options)
+
+            st.session_state["quiz_word"] = correct_word
+            st.session_state["quiz_options"] = options
+            st.session_state["quiz_answered"] = False
+            st.session_state["quiz_selected"] = None
+            st.rerun()
+
+    if "quiz_word" in st.session_state:
+        qword = st.session_state["quiz_word"]
+        qoptions = st.session_state["quiz_options"]
+
+        # Show the Telugu word
+        st.markdown(
+            f'<div class="word-card" style="text-align: center; padding: 30px;">'
+            f'<div class="practice-word">{qword["telugu"]}</div>'
+            f'<div style="color: #6B7585; font-size: 0.95em;">What does this word mean?</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+        # Play audio if available
+        filepath = get_word_filepath(user_dir, qword["cat_key"], qword["romanized"])
+        if os.path.exists(filepath):
+            col_a1, col_a2, col_a3 = st.columns([1, 2, 1])
+            with col_a2:
+                with open(filepath, "rb") as f:
+                    st.audio(f.read(), format="audio/mp3")
+
+        st.markdown("")
+
+        # Show options as buttons
+        answered = st.session_state.get("quiz_answered", False)
+
+        for i, opt in enumerate(qoptions):
+            is_correct = opt["english"] == qword["english"]
+            was_selected = st.session_state.get("quiz_selected") == i
+
+            if answered:
+                if is_correct:
+                    st.success(f"✅  {opt['english']}")
+                elif was_selected:
+                    st.error(f"❌  {opt['english']}")
+                else:
+                    st.button(opt["english"], key=f"quiz_opt_{i}", disabled=True)
+            else:
+                if st.button(opt["english"], key=f"quiz_opt_{i}", use_container_width=True):
+                    st.session_state["quiz_answered"] = True
+                    st.session_state["quiz_selected"] = i
+                    record_quiz_result(is_correct)
+                    st.rerun()
+
+        if answered:
+            selected_idx = st.session_state["quiz_selected"]
+            selected_opt = qoptions[selected_idx]
+            if selected_opt["english"] == qword["english"]:
+                st.markdown(
+                    f'<div class="quiz-streak">🔥 Streak: {st.session_state["quiz_stats"]["streak"]}</div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f'The correct answer was **{qword["english"]}** ({qword["telugu"]} — {qword["romanized"]})',
+                )
+                st.session_state["quiz_stats"]["streak"] = 0
+
+# ── Tab 5: Progress Dashboard ─────────────────────────────────────────────
+
+with tab_progress:
+    st.markdown(
+        '<p style="color: #9CA3AF; font-size: 1.05em;">'
+        'Track your learning journey across all categories.'
+        '</p>',
+        unsafe_allow_html=True,
+    )
+
+    progress_data = st.session_state.get("progress", {})
+    quiz_stats = st.session_state["quiz_stats"]
+
+    # Overall stats
+    total_words = sum(len(c["words"]) for c in word_categories.values())
+    practiced_words = len(progress_data)
+    mastered_words = sum(1 for v in progress_data.values() if v.get("mastered", False))
+    total_attempts = sum(v.get("attempts", 0) for v in progress_data.values())
+
+    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+    with col_s1:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{practiced_words}</div>'
+            f'<div class="progress-label">Words Practiced</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_s2:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{mastered_words}</div>'
+            f'<div class="progress-label">Words Mastered (90%+)</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_s3:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{total_attempts}</div>'
+            f'<div class="progress-label">Total Attempts</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_s4:
+        quiz_pct = int((quiz_stats["correct"] / max(quiz_stats["total"], 1)) * 100)
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_pct}%</div>'
+            f'<div class="progress-label">Quiz Accuracy</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    # Overall progress bar
+    overall_pct = int((mastered_words / max(total_words, 1)) * 100)
+    st.markdown(f"### Overall Mastery: {mastered_words}/{total_words} words")
+    st.markdown(
+        f'<div class="progress-bar-bg">'
+        f'<div class="progress-bar-fill-green" style="width: {overall_pct}%;"></div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<hr class="divider-accent">', unsafe_allow_html=True)
+
+    # Per-category breakdown
+    st.markdown("### Category Breakdown")
+
+    for cat_key, category in word_categories.items():
+        words_in_cat = category["words"]
+        cat_total = len(words_in_cat)
+
+        cat_practiced = 0
+        cat_mastered = 0
+        cat_details = []
+
+        for word in words_in_cat:
+            key = f"{cat_key}::{word['romanized']}"
+            entry = progress_data.get(key, None)
+            if entry:
+                cat_practiced += 1
+                if entry.get("mastered"):
+                    cat_mastered += 1
+                cat_details.append({
+                    "word": word,
+                    "attempts": entry["attempts"],
+                    "best_score": entry["best_score"],
+                    "mastered": entry["mastered"],
+                })
+            else:
+                cat_details.append({
+                    "word": word,
+                    "attempts": 0,
+                    "best_score": 0,
+                    "mastered": False,
+                })
+
+        cat_pct = int((cat_mastered / max(cat_total, 1)) * 100)
+
+        with st.expander(f"{category['label']}  —  {cat_mastered}/{cat_total} mastered", expanded=False):
+            st.markdown(
+                f'<div class="progress-bar-bg">'
+                f'<div class="progress-bar-fill" style="width: {cat_pct}%;"></div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+            for detail in cat_details:
+                w = detail["word"]
+                if detail["mastered"]:
+                    status = "✅"
+                    color = "#00cc66"
+                elif detail["attempts"] > 0:
+                    status = "🔶"
+                    color = "#ffaa00"
+                else:
+                    status = "⬜"
+                    color = "#6B7585"
+
+                col_w, col_s = st.columns([3, 1])
+                with col_w:
+                    st.markdown(
+                        f'<span style="color:{color};">{status}</span> '
+                        f'**{w["telugu"]}** ({w["romanized"]}) — {w["english"]}',
+                        unsafe_allow_html=True,
+                    )
+                with col_s:
+                    if detail["attempts"] > 0:
+                        st.markdown(
+                            f'Best: **{detail["best_score"]}%** · {detail["attempts"]} tries'
+                        )
+                    else:
+                        st.markdown('*Not practiced yet*')
+
+    st.markdown('<hr class="divider-accent">', unsafe_allow_html=True)
+
+    # Quiz stats section
+    st.markdown("### Quiz Performance")
+    col_q1, col_q2, col_q3 = st.columns(3)
+    with col_q1:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_stats["total"]}</div>'
+            f'<div class="progress-label">Questions Answered</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_q2:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_stats["correct"]}</div>'
+            f'<div class="progress-label">Correct Answers</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with col_q3:
+        st.markdown(
+            f'<div class="progress-card">'
+            f'<div class="progress-number">{quiz_stats["best_streak"]}</div>'
+            f'<div class="progress-label">Best Streak</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    # Reset progress button
+    st.markdown('<hr class="divider-accent">', unsafe_allow_html=True)
+    if st.button("🗑️ Reset All Progress", help="Clear all practice scores and quiz stats"):
+        st.session_state["progress"] = {}
+        st.session_state["quiz_stats"] = {"correct": 0, "total": 0, "streak": 0, "best_streak": 0}
+        st.success("Progress reset!")
+        st.rerun()
+
+# ── Tab 6: Generate All ─────────────────────────────────────────────────────
 
 with tab_generate_all:
     if "voice_id" in st.session_state:
