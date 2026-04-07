@@ -854,15 +854,23 @@ st.markdown("""
     </div>
     <div class="step-row">
         <div class="step-number">2</div>
-        <div class="step-text"><b>Generate audio</b> — Go to the <b>Generate All</b> tab and click "Generate Everything". This creates all Telugu word and rhyme audio in your own voice.</div>
+        <div class="step-text"><b>Generate audio</b> — Go to the <b>⚡ Generate All</b> tab and click "Generate Everything". This creates all Telugu word and rhyme audio in your own voice.</div>
     </div>
     <div class="step-row">
         <div class="step-number">3</div>
-        <div class="step-text"><b>Listen & learn</b> — Go to the <b>Words</b> tab to browse categories and hear each Telugu word pronounced in your voice. Check the <b>Nursery Rhymes</b> tab for fun rhymes.</div>
+        <div class="step-text"><b>Listen & learn</b> — Browse the <b>📚 Words</b> tab to hear each Telugu word. Check the <b>🎶 Nursery Rhymes</b> tab for fun rhymes to sing along with.</div>
     </div>
     <div class="step-row">
         <div class="step-number">4</div>
-        <div class="step-text"><b>Practice pronunciation</b> — Go to the <b>Pronunciation Practice</b> tab, pick a word, listen to it, then record yourself saying it. The app tells you exactly which sounds you got right or wrong.</div>
+        <div class="step-text"><b>Practice pronunciation</b> — Go to <b>🎯 Practice</b>, pick a word, listen to it, then record yourself saying it. The app highlights exactly which sounds you got right or wrong.</div>
+    </div>
+    <div class="step-row">
+        <div class="step-number">5</div>
+        <div class="step-text"><b>Test yourself</b> — Head to <b>🧠 Quiz</b> to hear a Telugu word and pick the correct English meaning. Build your streak and challenge yourself!</div>
+    </div>
+    <div class="step-row">
+        <div class="step-number">6</div>
+        <div class="step-text"><b>Track your progress</b> — Check the <b>📊 Progress</b> tab to see how many words you've mastered, your quiz accuracy, and which categories need more work.</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
