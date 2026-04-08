@@ -72,6 +72,97 @@
         {"telugu": "నేర్చుకో", "romanized": "Nērchukō", "english": "Learn"}
       ]
     },
+    "colors": {
+      "label": "Colors",
+      "words": [
+        {"telugu": "ఎరుపు", "romanized": "Erupu", "english": "Red"},
+        {"telugu": "నీలం", "romanized": "Nīlam", "english": "Blue"},
+        {"telugu": "పచ్చ", "romanized": "Pachcha", "english": "Green"},
+        {"telugu": "పసుపు", "romanized": "Pasupu", "english": "Yellow"},
+        {"telugu": "తెలుపు", "romanized": "Telupu", "english": "White"},
+        {"telugu": "నలుపు", "romanized": "Nalupu", "english": "Black"},
+        {"telugu": "నారింజ", "romanized": "Nārinja", "english": "Orange"},
+        {"telugu": "గులాబీ", "romanized": "Gulābī", "english": "Pink"},
+        {"telugu": "ఊదా", "romanized": "Ūdā", "english": "Purple"},
+        {"telugu": "గోధుమ", "romanized": "Gōdhuma", "english": "Brown"}
+      ]
+    },
+    "animals": {
+      "label": "Animals",
+      "words": [
+        {"telugu": "కుక్క", "romanized": "Kukka", "english": "Dog"},
+        {"telugu": "పిల్లి", "romanized": "Pilli", "english": "Cat"},
+        {"telugu": "ఆవు", "romanized": "Āvu", "english": "Cow"},
+        {"telugu": "గుర్రం", "romanized": "Gurram", "english": "Horse"},
+        {"telugu": "ఏనుగు", "romanized": "Ēnugu", "english": "Elephant"},
+        {"telugu": "పులి", "romanized": "Puli", "english": "Tiger"},
+        {"telugu": "సింహం", "romanized": "Simham", "english": "Lion"},
+        {"telugu": "కోతి", "romanized": "Kōti", "english": "Monkey"},
+        {"telugu": "చేప", "romanized": "Chēpa", "english": "Fish"},
+        {"telugu": "పక్షి", "romanized": "Pakshi", "english": "Bird"},
+        {"telugu": "పాము", "romanized": "Pāmu", "english": "Snake"},
+        {"telugu": "కప్ప", "romanized": "Kappa", "english": "Frog"}
+      ]
+    },
+    "food": {
+      "label": "Food & Drinks",
+      "words": [
+        {"telugu": "అన్నం", "romanized": "Annam", "english": "Rice"},
+        {"telugu": "పాలు", "romanized": "Pālu", "english": "Milk"},
+        {"telugu": "రొట్టె", "romanized": "Roṭṭe", "english": "Bread"},
+        {"telugu": "పండు", "romanized": "Paṇḍu", "english": "Fruit"},
+        {"telugu": "కూరగాయ", "romanized": "Kūragāya", "english": "Vegetable"},
+        {"telugu": "మాంసం", "romanized": "Māmsam", "english": "Meat"},
+        {"telugu": "గుడ్డు", "romanized": "Guḍḍu", "english": "Egg"},
+        {"telugu": "చక్కెర", "romanized": "Chakkera", "english": "Sugar"},
+        {"telugu": "ఉప్పు", "romanized": "Uppu", "english": "Salt"},
+        {"telugu": "నెయ్యి", "romanized": "Neyyi", "english": "Ghee"},
+        {"telugu": "టీ", "romanized": "Ṭī", "english": "Tea"},
+        {"telugu": "కాఫీ", "romanized": "Kāphī", "english": "Coffee"}
+      ]
+    },
+    "body_parts": {
+      "label": "Body Parts",
+      "words": [
+        {"telugu": "తల", "romanized": "Tala", "english": "Head"},
+        {"telugu": "కళ్ళు", "romanized": "Kaḷḷu", "english": "Eyes"},
+        {"telugu": "ముక్కు", "romanized": "Mukku", "english": "Nose"},
+        {"telugu": "నోరు", "romanized": "Nōru", "english": "Mouth"},
+        {"telugu": "చెవులు", "romanized": "Chevulu", "english": "Ears"},
+        {"telugu": "చేతులు", "romanized": "Chētulu", "english": "Hands"},
+        {"telugu": "కాళ్ళు", "romanized": "Kāḷḷu", "english": "Legs"},
+        {"telugu": "పొట్ట", "romanized": "Poṭṭa", "english": "Stomach"},
+        {"telugu": "వేళ్ళు", "romanized": "Vēḷḷu", "english": "Fingers"},
+        {"telugu": "గుండె", "romanized": "Guṇḍe", "english": "Heart"}
+      ]
+    },
+    "days_of_week": {
+      "label": "Days of the Week",
+      "words": [
+        {"telugu": "ఆదివారం", "romanized": "Ādivāram", "english": "Sunday"},
+        {"telugu": "సోమవారం", "romanized": "Sōmavāram", "english": "Monday"},
+        {"telugu": "మంగళవారం", "romanized": "Mangaḷavāram", "english": "Tuesday"},
+        {"telugu": "బుధవారం", "romanized": "Budhavāram", "english": "Wednesday"},
+        {"telugu": "గురువారం", "romanized": "Guruvāram", "english": "Thursday"},
+        {"telugu": "శుక్రవారం", "romanized": "Śukravāram", "english": "Friday"},
+        {"telugu": "శనివారం", "romanized": "Śanivāram", "english": "Saturday"}
+      ]
+    },
+    "common_phrases": {
+      "label": "Common Phrases",
+      "words": [
+        {"telugu": "మీ పేరు ఏమిటి", "romanized": "Mī pēru ēmiṭi", "english": "What is your name?"},
+        {"telugu": "నా పేరు", "romanized": "Nā pēru", "english": "My name is"},
+        {"telugu": "ఇది ఎంత", "romanized": "Idi enta", "english": "How much is this?"},
+        {"telugu": "నాకు అర్థం కాలేదు", "romanized": "Nāku artham kālēdu", "english": "I don't understand"},
+        {"telugu": "మళ్ళీ చెప్పండి", "romanized": "Maḷḷī cheppaṇḍi", "english": "Please say again"},
+        {"telugu": "సహాయం చేయండి", "romanized": "Sahāyam chēyaṇḍi", "english": "Please help"},
+        {"telugu": "నాకు తెలుగు నేర్చుకోవాలి", "romanized": "Nāku Telugu nērchukōvāli", "english": "I want to learn Telugu"},
+        {"telugu": "బాత్రూమ్ ఎక్కడ", "romanized": "Bāthrūm ekkaḍa", "english": "Where is the bathroom?"},
+        {"telugu": "నాకు ఆకలిగా ఉంది", "romanized": "Nāku ākaligā undi", "english": "I am hungry"},
+        {"telugu": "నాకు దాహంగా ఉంది", "romanized": "Nāku dāhamgā undi", "english": "I am thirsty"}
+      ]
+    },
     "nursery_rhymes": {
       "label": "Nursery Rhymes",
       "rhymes": [
