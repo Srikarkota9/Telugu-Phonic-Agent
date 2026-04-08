@@ -371,37 +371,106 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
 
-    /* ─── Cool Dark Background ─── */
-    .stApp {
-        background:
-            radial-gradient(ellipse at 15% 10%, rgba(255,107,53,0.06) 0%, transparent 50%),
-            radial-gradient(ellipse at 85% 20%, rgba(120,80,255,0.05) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 80%, rgba(255,179,71,0.04) 0%, transparent 50%),
-            linear-gradient(180deg, #08090D 0%, #0C0E14 30%, #10121A 60%, #0E1117 100%);
-        background-attachment: fixed;
+    /* ─── Mesh Gradient Background ─── */
+    @keyframes meshMove1 {
+        0%, 100% { transform: translate(0%, 0%) scale(1); }
+        25% { transform: translate(10%, 15%) scale(1.1); }
+        50% { transform: translate(-5%, 10%) scale(0.95); }
+        75% { transform: translate(5%, -10%) scale(1.05); }
     }
-    .stApp::before {
-        content: '';
+    @keyframes meshMove2 {
+        0%, 100% { transform: translate(0%, 0%) scale(1); }
+        25% { transform: translate(-15%, 5%) scale(1.05); }
+        50% { transform: translate(10%, -10%) scale(1.1); }
+        75% { transform: translate(-5%, 15%) scale(0.95); }
+    }
+    @keyframes meshMove3 {
+        0%, 100% { transform: translate(0%, 0%) scale(1.05); }
+        33% { transform: translate(12%, -8%) scale(0.95); }
+        66% { transform: translate(-8%, 12%) scale(1.1); }
+    }
+
+    .stApp {
+        background: #05060A;
+        position: relative;
+    }
+
+    /* Mesh gradient blobs */
+    .mesh-bg {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image:
-            radial-gradient(circle at 20% 50%, rgba(255,107,53,0.03) 0%, transparent 40%),
-            radial-gradient(circle at 80% 30%, rgba(100,60,255,0.025) 0%, transparent 40%);
         pointer-events: none;
         z-index: 0;
+        overflow: hidden;
     }
+    .mesh-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.5;
+    }
+    .mesh-blob-1 {
+        width: 600px;
+        height: 600px;
+        top: -10%;
+        left: -5%;
+        background: radial-gradient(circle, rgba(255,107,53,0.18) 0%, transparent 70%);
+        animation: meshMove1 20s ease-in-out infinite;
+    }
+    .mesh-blob-2 {
+        width: 500px;
+        height: 500px;
+        top: 10%;
+        right: -8%;
+        background: radial-gradient(circle, rgba(120,60,255,0.14) 0%, transparent 70%);
+        animation: meshMove2 25s ease-in-out infinite;
+    }
+    .mesh-blob-3 {
+        width: 550px;
+        height: 550px;
+        bottom: -5%;
+        left: 30%;
+        background: radial-gradient(circle, rgba(255,179,71,0.12) 0%, transparent 70%);
+        animation: meshMove3 22s ease-in-out infinite;
+    }
+    .mesh-blob-4 {
+        width: 400px;
+        height: 400px;
+        top: 50%;
+        left: 10%;
+        background: radial-gradient(circle, rgba(0,204,150,0.08) 0%, transparent 70%);
+        animation: meshMove2 28s ease-in-out infinite reverse;
+    }
+
+    /* Particle canvas */
+    .particles-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
     [data-testid="stAppViewContainer"] {
         background: transparent;
+        position: relative;
+        z-index: 2;
     }
     [data-testid="stHeader"] {
-        background: rgba(8,9,13,0.8);
-        backdrop-filter: blur(12px);
+        background: rgba(5,6,10,0.7);
+        backdrop-filter: blur(16px);
+    }
+    [data-testid="stMain"] {
+        background: transparent;
     }
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #08090D, #0E1018, #131620) !important;
+        background: rgba(8,9,14,0.85) !important;
+        backdrop-filter: blur(20px);
         border-right: 1px solid rgba(255,107,53,0.06);
     }
 
@@ -865,6 +934,115 @@ st.markdown("""
         color: #FFB347;
     }
 </style>
+""", unsafe_allow_html=True)
+
+# ── Mesh Gradient Blobs + Particles ─────────────────────────────────────────
+
+st.markdown("""
+<!-- Mesh gradient blobs -->
+<div class="mesh-bg">
+    <div class="mesh-blob mesh-blob-1"></div>
+    <div class="mesh-blob mesh-blob-2"></div>
+    <div class="mesh-blob mesh-blob-3"></div>
+    <div class="mesh-blob mesh-blob-4"></div>
+</div>
+
+<!-- Particle animation -->
+<canvas class="particles-canvas" id="particlesCanvas"></canvas>
+
+<script>
+(function() {
+    const canvas = document.getElementById('particlesCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const particles = [];
+    const PARTICLE_COUNT = 60;
+
+    const colors = [
+        'rgba(255,107,53,',   // orange
+        'rgba(255,179,71,',   // gold
+        'rgba(140,80,255,',   // purple
+        'rgba(0,204,150,',    // teal
+    ];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 2 + 0.5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: Math.random() * 0.5 + 0.15,
+            pulseSpeed: Math.random() * 0.02 + 0.005,
+            pulsePhase: Math.random() * Math.PI * 2,
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const t = Date.now() * 0.001;
+
+        for (const p of particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Wrap around edges
+            if (p.x < -10) p.x = canvas.width + 10;
+            if (p.x > canvas.width + 10) p.x = -10;
+            if (p.y < -10) p.y = canvas.height + 10;
+            if (p.y > canvas.height + 10) p.y = -10;
+
+            // Pulsing alpha
+            const a = p.alpha + Math.sin(t * p.pulseSpeed * 10 + p.pulsePhase) * 0.1;
+
+            // Glow
+            ctx.beginPath();
+            const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+            gradient.addColorStop(0, p.color + a + ')');
+            gradient.addColorStop(1, p.color + '0)');
+            ctx.fillStyle = gradient;
+            ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Core dot
+            ctx.beginPath();
+            ctx.fillStyle = p.color + (a + 0.2) + ')';
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Draw faint connection lines between nearby particles
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    const lineAlpha = (1 - dist / 120) * 0.08;
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(255,107,53,' + lineAlpha + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
 """, unsafe_allow_html=True)
 
 # ── Header Banner ────────────────────────────────────────────────────────────
