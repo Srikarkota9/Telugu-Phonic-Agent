@@ -1318,8 +1318,13 @@ with tab_quiz:
             unsafe_allow_html=True,
         )
 
-        # Play audio if available
+        # Play audio — generate on the spot if it doesn't exist yet
         filepath = get_word_filepath(user_dir, qword["cat_key"], qword["romanized"])
+        if not os.path.exists(filepath):
+            client = get_client()
+            if client:
+                audio = generate_single_audio(client, active_voice, qword["telugu"], pronunciation_hint=qword["romanized"])
+                save_audio(audio, filepath)
         if os.path.exists(filepath):
             col_a1, col_a2, col_a3 = st.columns([1, 2, 1])
             with col_a2:
