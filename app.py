@@ -371,6 +371,40 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
 
+    /* ─── Cool Dark Background ─── */
+    .stApp {
+        background:
+            radial-gradient(ellipse at 15% 10%, rgba(255,107,53,0.06) 0%, transparent 50%),
+            radial-gradient(ellipse at 85% 20%, rgba(120,80,255,0.05) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 80%, rgba(255,179,71,0.04) 0%, transparent 50%),
+            linear-gradient(180deg, #08090D 0%, #0C0E14 30%, #10121A 60%, #0E1117 100%);
+        background-attachment: fixed;
+    }
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(circle at 20% 50%, rgba(255,107,53,0.03) 0%, transparent 40%),
+            radial-gradient(circle at 80% 30%, rgba(100,60,255,0.025) 0%, transparent 40%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    [data-testid="stAppViewContainer"] {
+        background: transparent;
+    }
+    [data-testid="stHeader"] {
+        background: rgba(8,9,13,0.8);
+        backdrop-filter: blur(12px);
+    }
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #08090D, #0E1018, #131620) !important;
+        border-right: 1px solid rgba(255,107,53,0.06);
+    }
+
     /* ─── Animations ─── */
     @keyframes gradientShift {
         0% { background-position: 0% 50%; }
