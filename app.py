@@ -352,6 +352,233 @@ def get_all_words(word_categories):
     return all_words
 
 
+# ── Admin Mode (hidden, password-protected) ─────────────────────────────────
+# Master recordings live in generated_audio/default/ — same folder default
+# users already pull audio from. Recording here = the new master voice for
+# everyone who hasn't cloned their own voice yet.
+
+ADMIN_AUDIO_DIR = os.path.join(OUTPUT_DIR, "default")
+
+
+def _is_admin_url():
+    try:
+        return st.query_params.get("admin") == "true"
+    except Exception:
+        return False
+
+
+def _admin_authed():
+    return st.session_state.get("_admin_authed", False)
+
+
+def _admin_login_screen():
+    st.markdown("## 🔐 Admin Access")
+    st.caption("This area is for the project owner only.")
+    pwd = st.text_input("Admin password", type="password", key="_admin_pwd_input")
+    if st.button("Unlock", key="_admin_unlock_btn", type="primary"):
+        expected = st.secrets.get("ADMIN_PASSWORD", "")
+        if expected and pwd == expected:
+            st.session_state["_admin_authed"] = True
+            st.rerun()
+        else:
+            st.error("Wrong password.")
+    st.stop()
+
+
+def _admin_word_filepath(cat_key, romanized):
+    safe = romanized.replace(" ", "_").replace("/", "_").lower()
+    return os.path.join(ADMIN_AUDIO_DIR, cat_key, f"{safe}.mp3")
+
+
+def _admin_rhyme_filepath(rhyme_title, verse_index):
+    safe_title = rhyme_title.replace(" ", "_").lower()
+    return os.path.join(
+        ADMIN_AUDIO_DIR, "nursery_rhymes", safe_title, f"verse_{verse_index}.mp3"
+    )
+
+
+def _wav_bytes_to_mp3(wav_bytes):
+    """Convert browser-recorded audio (WAV/WebM) to MP3 via ffmpeg.
+    Falls back to raw bytes if ffmpeg unavailable."""
+    import subprocess
+    src = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    src.write(wav_bytes)
+    src.close()
+    dst = src.name.replace(".wav", ".mp3")
+    try:
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", src.name, "-codec:a", "libmp3lame", "-b:a", "128k", dst],
+            check=True, capture_output=True,
+        )
+        with open(dst, "rb") as f:
+            return f.read()
+    except Exception:
+        return wav_bytes
+    finally:
+        for p in (src.name, dst):
+            if os.path.exists(p):
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
+
+
+def _admin_zip_all():
+    import io, zipfile
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        if os.path.isdir(ADMIN_AUDIO_DIR):
+            for root, _, files in os.walk(ADMIN_AUDIO_DIR):
+                for fname in files:
+                    if fname.endswith(".mp3"):
+                        full = os.path.join(root, fname)
+                        rel = os.path.relpath(full, ADMIN_AUDIO_DIR)
+                        zf.write(full, arcname=os.path.join("default", rel))
+    buf.seek(0)
+    return buf.getvalue()
+
+
+def _admin_recording_block(label, fp, base_key, recorder_label="Record"):
+    """Shared UI: status + audio + re-record + delete + recorder + save."""
+    has = os.path.exists(fp)
+    cs1, cs2 = st.columns([4, 1])
+    with cs1:
+        st.markdown(label, unsafe_allow_html=True)
+    with cs2:
+        st.markdown("✅ Recorded" if has else "⚪ Empty")
+
+    if has:
+        with open(fp, "rb") as f:
+            st.audio(f.read(), format="audio/mp3")
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("🔁 Re-record", key=f"{base_key}_rerec"):
+                st.session_state[f"{base_key}_show_recorder"] = True
+                st.rerun()
+        with c2:
+            if st.button("🗑️ Delete", key=f"{base_key}_del"):
+                try:
+                    os.remove(fp)
+                    st.session_state.pop(f"{base_key}_show_recorder", None)
+                    st.success("Deleted.")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Delete failed: {e}")
+
+    show_recorder = (not has) or st.session_state.get(f"{base_key}_show_recorder", False)
+    if show_recorder:
+        rec = st.audio_input(recorder_label, key=f"{base_key}_rec")
+        if rec is not None:
+            st.audio(rec.getvalue(), format="audio/wav")
+            if st.button("💾 Save", key=f"{base_key}_save", type="primary"):
+                os.makedirs(os.path.dirname(fp), exist_ok=True)
+                mp3 = _wav_bytes_to_mp3(rec.getvalue())
+                with open(fp, "wb") as f:
+                    f.write(mp3)
+                st.session_state.pop(f"{base_key}_show_recorder", None)
+                st.success("Saved.")
+                st.rerun()
+
+
+def render_admin_interface(word_bank, word_categories, has_rhymes):
+    """The full admin recording dashboard. Only reachable with ?admin=true + password."""
+    st.markdown("# 🎙️ Admin Recording Studio")
+    st.caption("Record the master voice every default user will hear.")
+
+    st.warning(
+        "⚠️ **Streamlit Cloud is ephemeral.** Recordings here disappear when the "
+        "app restarts. After recording, click **Download all recordings** below "
+        "and commit the files into `generated_audio/default/` in your GitHub "
+        "repo so they ship with every deploy.",
+        icon="⚠️",
+    )
+
+    # Stats + bulk actions
+    total_words = sum(len(c["words"]) for c in word_categories.values())
+    recorded_words = sum(
+        1 for ck, c in word_categories.items()
+        for w in c["words"] if os.path.exists(_admin_word_filepath(ck, w["romanized"]))
+    )
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Words", f"{recorded_words} / {total_words}")
+    if has_rhymes:
+        rhymes = word_bank["categories"]["nursery_rhymes"]["rhymes"]
+        total_verses = sum(len(r["verses"]) for r in rhymes)
+        recorded_verses = sum(
+            1 for r in rhymes for i, _ in enumerate(r["verses"])
+            if os.path.exists(_admin_rhyme_filepath(r["title"], i))
+        )
+        col2.metric("Verses", f"{recorded_verses} / {total_verses}")
+
+    with col3:
+        try:
+            zip_bytes = _admin_zip_all()
+            st.download_button(
+                "📦 Download all recordings (.zip)",
+                data=zip_bytes,
+                file_name="default_recordings.zip",
+                mime="application/zip",
+                use_container_width=True,
+            )
+        except Exception as e:
+            st.caption(f"No recordings yet ({e})")
+
+    if st.button("🚪 Log out of admin"):
+        st.session_state.pop("_admin_authed", None)
+        st.rerun()
+
+    st.markdown("---")
+
+    # Word categories
+    for cat_key, category in word_categories.items():
+        cat_total = len(category["words"])
+        cat_done = sum(
+            1 for w in category["words"]
+            if os.path.exists(_admin_word_filepath(cat_key, w["romanized"]))
+        )
+        with st.expander(f"📚 {category['label']}  ({cat_done}/{cat_total})", expanded=False):
+            for word in category["words"]:
+                fp = _admin_word_filepath(cat_key, word["romanized"])
+                safe = word["romanized"].replace(" ", "_").lower()
+                base_key = f"adm_{cat_key}_{safe}"
+                label = (
+                    f"<div style='font-size:20px;font-family:\"Noto Sans Telugu\",sans-serif;'>"
+                    f"{word['telugu']}</div>"
+                    f"<div style='color:#aaa;'>{word['romanized']} — {word['english']}</div>"
+                )
+                _admin_recording_block(
+                    label, fp, base_key,
+                    recorder_label=f"🎤 Say: {word['romanized']}",
+                )
+                st.markdown("<hr style='opacity:0.2;'>", unsafe_allow_html=True)
+
+    # Nursery rhymes
+    if has_rhymes:
+        rhymes = word_bank["categories"]["nursery_rhymes"]["rhymes"]
+        for rhyme in rhymes:
+            title = rhyme["title"]
+            r_total = len(rhyme["verses"])
+            r_done = sum(
+                1 for i, _ in enumerate(rhyme["verses"])
+                if os.path.exists(_admin_rhyme_filepath(title, i))
+            )
+            with st.expander(f"🎶 {rhyme['title_telugu']}  —  {title}  ({r_done}/{r_total})",
+                             expanded=False):
+                for i, verse in enumerate(rhyme["verses"]):
+                    fp = _admin_rhyme_filepath(title, i)
+                    base_key = f"adm_rhyme_{title.replace(' ','_').lower()}_{i}"
+                    telugu_html = verse["telugu"].replace("\n", "<br>")
+                    label = (
+                        f"<div style='font-weight:600;color:#FF6B35;'>Verse {i+1}</div>"
+                        f"<div style='font-family:\"Noto Sans Telugu\",sans-serif;line-height:1.6;'>"
+                        f"{telugu_html}</div>"
+                    )
+                    _admin_recording_block(
+                        label, fp, base_key, recorder_label=f"🎤 Recite verse {i+1}"
+                    )
+                    st.markdown("<hr style='opacity:0.2;'>", unsafe_allow_html=True)
+
+
 # ── Page Config ──────────────────────────────────────────────────────────────
 
 st.set_page_config(
@@ -1172,6 +1399,15 @@ user_dir = get_user_audio_dir()
 active_voice = get_active_voice_id()
 
 init_progress()
+
+# ── Admin gate ───────────────────────────────────────────────────────────────
+# Visit ?admin=true on the URL and enter the password from secrets.toml.
+# Regular users never see this and never know it exists.
+if _is_admin_url():
+    if not _admin_authed():
+        _admin_login_screen()
+    render_admin_interface(word_bank, word_categories, has_rhymes)
+    st.stop()
 
 tab_words, tab_rhymes, tab_practice, tab_quiz, tab_progress, tab_generate_all = st.tabs(
     ["📚 Words", "🎶 Nursery Rhymes", "🎯 Practice", "🧠 Quiz", "📊 Progress", "⚡ Generate All"]

@@ -1,7 +1,13 @@
-generated_audio/
+# Ignore everything inside generated_audio/ EXCEPT the default/ master recordings
+generated_audio/*
+!generated_audio/default/
+
 __pycache__/
 .streamlit/secrets.toml
 *.pyc
 *.wav
+*.DS_Store
+
+# Ignore mp3s globally EXCEPT the master default recordings
 *.mp3
-.DS_Store
+!generated_audio/default/**/*.mp3
