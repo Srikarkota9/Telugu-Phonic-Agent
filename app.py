@@ -390,10 +390,11 @@ def _admin_word_filepath(cat_key, romanized):
     return os.path.join(ADMIN_AUDIO_DIR, cat_key, f"{safe}.mp3")
 
 
-def _admin_rhyme_filepath(rhyme_title, verse_index):
+def _admin_rhyme_filepath(rhyme_title, verse_number):
+    """Match the main app's naming: verse_{verse_number}.mp3 (1-indexed)."""
     safe_title = rhyme_title.replace(" ", "_").lower()
     return os.path.join(
-        ADMIN_AUDIO_DIR, "nursery_rhymes", safe_title, f"verse_{verse_index}.mp3"
+        ADMIN_AUDIO_DIR, "nursery_rhymes", safe_title, f"verse_{verse_number}.mp3"
     )
 
 
@@ -505,8 +506,8 @@ def render_admin_interface(word_bank, word_categories, has_rhymes):
         rhymes = word_bank["categories"]["nursery_rhymes"]["rhymes"]
         total_verses = sum(len(r["verses"]) for r in rhymes)
         recorded_verses = sum(
-            1 for r in rhymes for i, _ in enumerate(r["verses"])
-            if os.path.exists(_admin_rhyme_filepath(r["title"], i))
+            1 for r in rhymes for v in r["verses"]
+            if os.path.exists(_admin_rhyme_filepath(r["title"], v["verse_number"]))
         )
         col2.metric("Verses", f"{recorded_verses} / {total_verses}")
 
@@ -559,22 +560,23 @@ def render_admin_interface(word_bank, word_categories, has_rhymes):
             title = rhyme["title"]
             r_total = len(rhyme["verses"])
             r_done = sum(
-                1 for i, _ in enumerate(rhyme["verses"])
-                if os.path.exists(_admin_rhyme_filepath(title, i))
+                1 for v in rhyme["verses"]
+                if os.path.exists(_admin_rhyme_filepath(title, v["verse_number"]))
             )
             with st.expander(f"🎶 {rhyme['title_telugu']}  —  {title}  ({r_done}/{r_total})",
                              expanded=False):
-                for i, verse in enumerate(rhyme["verses"]):
-                    fp = _admin_rhyme_filepath(title, i)
-                    base_key = f"adm_rhyme_{title.replace(' ','_').lower()}_{i}"
+                for verse in rhyme["verses"]:
+                    vnum = verse["verse_number"]
+                    fp = _admin_rhyme_filepath(title, vnum)
+                    base_key = f"adm_rhyme_{title.replace(' ','_').lower()}_{vnum}"
                     telugu_html = verse["telugu"].replace("\n", "<br>")
                     label = (
-                        f"<div style='font-weight:600;color:#FF6B35;'>Verse {i+1}</div>"
+                        f"<div style='font-weight:600;color:#FF6B35;'>Verse {vnum}</div>"
                         f"<div style='font-family:\"Noto Sans Telugu\",sans-serif;line-height:1.6;'>"
                         f"{telugu_html}</div>"
                     )
                     _admin_recording_block(
-                        label, fp, base_key, recorder_label=f"🎤 Recite verse {i+1}"
+                        label, fp, base_key, recorder_label=f"🎤 Recite verse {vnum}"
                     )
                     st.markdown("<hr style='opacity:0.2;'>", unsafe_allow_html=True)
 
